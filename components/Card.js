@@ -7,16 +7,20 @@ class Card extends Component{
         return(
             <View>
                 <CardSection>
+                <View style={{ flexDirection: "row"}}>
                     <Image 
                         style={{width: 100, height: 100}}
-                        source={{uri: 'https://bit.ly/2HXxf4P'}}/>
-
-                    <Text>พรุ่งนี้ค่อย</Text>
-                    <Text>POP</Text>
-
+                        source={{uri: 'https://bit.ly/2UjF6RG'}}/>
+                    
+                <View style={{ marginTop: 15, marginLeft: 10}}>
+                    <Text>Album Name : The Avengers</Text>
+                    <Text>Artist Name : Kittiporn</Text>
+                </View>
+                </View>
                 </CardSection>
-                
+            
                 <CardSection>
+                    <Text></Text>
                     <Image 
                         style={{width: 420, height: 350}}
                         source={{uri: 'https://bit.ly/2HXxf4P'}}/>

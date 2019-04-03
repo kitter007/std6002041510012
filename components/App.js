@@ -8,7 +8,7 @@ class App extends Component{
         return(
             <View>
                 <Header title = {'Albums'}></Header>
-                <Text>Kittiporn Sinnurukkun</Text>
+                <Text></Text>
                 <Card/>
             </View>
         );
