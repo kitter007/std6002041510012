@@ -1,75 +1,102 @@
-import React,{ Component } from 'react';
-import {View,Text,TextInput,Button} from 'react-native';
+// import library
+import React, { Component } from 'react';
+import { View, Text, TextInput, Button,Alert } from 'react-native';
 import axios from 'axios';
+import { NavigationEvents } from 'react-navigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
-class Login extends Component{
-    constructor(){
-        super();
-        this.state={
-            email:'',
-            password:''
+// write component
+class Login extends Component {
+    static navigationOptions = {
+        title:'Login',
+        headerStyle: {
+            backgroundColor: "#D0B3E1",
+        },
+        headerTintColor: "black",
+    };
+    constructor() {
+        super()
+        this.state = {
+            email: '',
+            password: ''
         }
-        this.onChangeEmail = this.onChangeEmail.bind(this)
-        this.onChangePassword = this.onChangePassword.bind(this)
+        // this.onChangeEmail = this.onChangeEmail.bind(this)
     }
-    onChangeEmail(e){
-        console.log('onChangeEmail',e)
-        this.setState({email:e})
-       
+    async componentDidMount(){
+        const {navigate} = this.props.navigation;
+        const token = await AsyncStorage.getItem('@storage_Token')
+        if (token) {
+            console.log('token_check',token)
+            return navigate('Profile')   
+        }
     }
-    onChangePassword(e){
-        console.log('onChangePassword',e)
-        this.setState({password:e})
+    onChangeEmail(e) {
+        console.log('onChangeEmail', e)
+        this.setState({ email: e}) 
     }
-    onPress(){
+    onChangePassword(e) {
+        this.setState({ password: e})
+    }
+    async onPress() {
         console.log(this.state)
         const url = 'http://128.199.240.120:9999/api/auth/login'
-        axios.post(url, this.state)
-            .then(response=>{
-                console.log('login', response.data.data.token)
-            })
+        await axios.post(url, this.state)
+            .then(async response => {
+                console.log('token ', response.data.data.token)
+                await AsyncStorage.setItem('@storage_Token', response.data.data.token)
+                const {navigate} = this.props.navigation;
+                return navigate('Profile') 
+            }).catch(error => {
+                Alert.alert(
+                  'Wrong',
+                  'Email หรือ Password ไม่ถูกต้อง',
+                  [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                  ],
+                  {cancelable: false},
+                );
+              });
     }
-    render(){
-        return(
-            <View> 
-                <Text></Text>
-                <Text style={{width:350,marginLeft:30,fontSize:24,fontWeight:'bold'}}>Login Form</Text>
-                <TextInput
-                    style={style=styles.textin}
-                    placeholder='Email'
-                    value={this.state.email}
-                    onChangeText={this.onChangeEmail} />
-
-                <TextInput
-                    secureTextEntry
-                    style={style=styles.textin}
-                    placeholder='Password'
-                    value={this.state.password}
-                    onChangeText={this.onChangePassword}  />
-
-                <View style={{width:350,marginLeft:30,marginTop:10}}>
-                <Button
-                    title='Login'
-                    onPress={this.onPress.bind(this)}
+    render() {
+        return (
+            <View style={{ paddingTop: 10 }}>
+                <Text style={{ textAlign: "center", fontSize: 28, color: "black" }}>Login Form</Text>
+                <View style={{ padding: 20}}>
+                    <TextInput
+                        placeholder="Email"
+                        onChangeText={(text) => this.setState({ email: text })}
+                        value={this.state.email}
+                        style={styles.textin}
                     />
+
+                    <TextInput
+                        placeholder="Password"
+                        onChangeText={(text) => this.setState({ password: text })}
+                        value={this.state.password}
+                        style={styles.textin}
+                        secureTextEntry
+                    />
+
+                    <Button title="Login" onPress={this.onPress.bind(this)} />
                 </View>
             </View>
-            
         );
     }
 }
-export default Login;
 
 const styles = {
     textin:{
-        height:40,
-        width:350,
+        height:50,
         backgroundColor:'#F5F5F5',
         fontWeight:'bold',
         borderRadius:7,
-        marginLeft:30,
+        marginLeft:0,
         borderWidth: 1.5,     
         borderColor: '#d6d7da',
-        marginTop:7
+        marginBottom:10,
+        fontSize: 20
     },
 };
+
+// export
+export default Login;
